@@ -1,24 +1,22 @@
 ---
-  - name: Ensure CouchPotato dependencies are installed
+  - name: Ensure couchpotato dependencies are installed
     apt: name={{ item }} state=present
     with_items: packages
     when: ansible_os_family == "Debian"
 
-  - name: Ensure CouchPotato dependencies are installed
-    apt: name={{ item }} state=present
+  - name: Ensure couchpotato dependencies are installed
+    yum: name={{ item }} state=present
     with_items: packages
     when: ansible_os_family == "RedHat"
 
-  - name: Fetch CouchPotato from GitHub
+  - name: Fetch couchpotato from GitHub
     git: repo=git://github.com/RuudBurger/CouchPotatoServer
          dest={{ couchpotato_base }}/couchpotato
          update=no
          accept_hostkey=True
 
-  - name: Deploy CouchPotato service script
-    copy: dest=/etc/systemd/system/couchpotato.service
-              src={{ couchpotato_base }}/couchpotato/init/couchpotato.fedora.service
-              owner=root group=root mode=755
+  - name: Deploy couchpotato service script
+    command: cp {{ couchpotato_base }}/couchpotato/init/couchpotato.fedora.service /etc/systemd/system/couchpotato.service
     notify: restart couchpotato
     when: system_init == "systemd"
 
@@ -32,7 +30,7 @@
         name={{ couchpotato_user_name }}
         comment="Couchptato user"
 
-  - name: Ensure the CouchPotato service is running and enabled on boot
+  - name: Start couchpotato and enabled start at boot
     service: name=couchpotato state=started enabled=yes
 
   - name: Set ownership
