@@ -33,8 +33,13 @@
   - name: Start couchpotato and enabled start at boot
     service: name=couchpotato state=started enabled=yes
 
-  - name: Set ownership
+  - name: Set ownership to couchpotato user
     file: path={{ item.path }} owner={{ couchpotato_user_name }}
     with_items:
       - { path: "{{ couchpotato_base }}/couchpotato" }
+
+  - name: Set Additional ownership
+    file: path={{ item.path }} owner={{ couchpotato_user_name }}
+    with_items:
       - { path: "/var/opt/couchpotato" }
+    when: ansible_os_family == "Debian"
